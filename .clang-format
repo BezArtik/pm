@@ -7,6 +7,15 @@ AccessModifierOffset: -4
 BreakBeforeBraces: Attach
 NamespaceIndentation: None
 
+SortIncludes: true
+IncludeBlocks: Regroup
+IncludeCategories:
+  - Regex: '^"(.*)\.hpp"$'
+    Priority: 1
+  - Regex: '^"(domain|app|infrastructure|presentation)/'
+    Priority: 2
+  - Regex: '^<'
+    Priority: 3
 
 AllowShortFunctionsOnASingleLine: Inline
 AllowShortIfStatementsOnASingleLine: true

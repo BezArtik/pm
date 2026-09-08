@@ -1,6 +1,6 @@
 
 CompileFlags:
-  CompilationDatabase: ./out/build/clang-debug/
+  CompilationDatabase: out/build/clang-debug/
 
 Diagnostics:
   UnusedIncludes: Strict

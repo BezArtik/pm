@@ -1,3 +1,9 @@
+# Complile Commands
+complile_commands.json
+
+# Data Base
+*.db
+
 # Prerequisites
 *.d
 

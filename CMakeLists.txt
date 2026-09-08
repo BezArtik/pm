@@ -1,4 +1,7 @@
 cmake_minimum_required(VERSION 3.30)
-project(password-manager VERSION 0.1.0)
+project(password_manager LANGUAGES CXX)
 
-add_executable(pm src/main.cpp)
+find_package(SQLite3 REQUIRED)
+
+add_subdirectory(src)
+
