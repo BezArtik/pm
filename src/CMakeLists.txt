@@ -10,7 +10,7 @@ target_include_directories(password-manager-lib PUBLIC
     $<BUILD_INTERFACE:${CMAKE_SOURCE_DIR}/include>
 )
 
-target_link_libraries(password-manager-lib PUBLIC SQLite::SQLite3)
+target_link_libraries(password-manager-lib PUBLIC sqlite_orm::sqlite_orm)
 
 add_executable(pm main.cpp)
 target_link_libraries(pm PRIVATE password-manager-lib)

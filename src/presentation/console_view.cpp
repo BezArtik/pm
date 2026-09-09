@@ -1,6 +1,9 @@
 #include "presentation/console_view.hpp"
 
+#include "domain/password.hpp"
+
 #include <array>
+#include <chrono>
 #include <format>
 #include <print>
 
@@ -25,7 +28,8 @@ std::string truncate(std::string_view str, std::size_t max_width) {
     return std::format("{}...", str.substr(0, max_width - 3));
 }
 
-std::string format_date(std::chrono::system_clock::time_point time) {
+std::string format_date(domain::time_type timestamp) {
+    auto time = std::chrono::system_clock::from_time_t(timestamp);
     return std::format("{:%Y-%m-%d}", time);
 }
 

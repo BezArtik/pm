@@ -12,6 +12,15 @@ class password_service {
 public:
     password_service(infrastructure::password_repository& repository) : repository_{repository} {}
 
+    password_service() = delete;
+
+    ~password_service() = default;
+
+    password_service(const password_service&) = delete;
+    password_service& operator=(const password_service&) = delete;
+    password_service(password_service&&) = delete;
+    password_service& operator=(password_service&&) = delete;
+
     [[nodiscard]] std::expected<domain::password_entry, std::string> add_password(std::string title, std::string login,
                                                                                   std::string password);
 
