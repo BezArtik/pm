@@ -1,39 +1,29 @@
+// presentation/console_view.cpp
+
 #include "presentation/console_view.hpp"
 
-#include "domain/password.hpp"
+#include "CLI/CLI.hpp"
 
-#include <array>
 #include <chrono>
 #include <format>
 #include <print>
+#include <ranges>
 
 namespace pm::presentation {
 
 namespace {
-// clang-format off
-constexpr std::array commands = {
-    std::string_view{"add"}, 
-    std::string_view{"list"}
-};
 
-constexpr std::array add_option_names = {
-    std::string_view{"--title="}, 
-    std::string_view{"--login="},
-    std::string_view{"--password="}
-};
-// clang-format on
-
-std::string truncate(std::string_view str, std::size_t max_width) {
+auto truncate(std::string_view str, std::size_t max_width) {
     if (str.length() <= max_width) { return std::string{str}; }
     return std::format("{}...", str.substr(0, max_width - 3));
 }
 
-std::string format_date(domain::time_type timestamp) {
+auto format_date(pm::domain::time_type timestamp) {
     auto time = std::chrono::system_clock::from_time_t(timestamp);
     return std::format("{:%Y-%m-%d}", time);
 }
 
-std::string format_add(const pm::domain::password_entry& entry) {
+auto format_add_success(const pm::domain::password_entry& entry) {
     return std::format(
         "Entry added successfully:\n"
         "  ID: {}\n"
@@ -43,8 +33,8 @@ std::string format_add(const pm::domain::password_entry& entry) {
         entry.id_, entry.title_, entry.login_.empty() ? "(empty)" : entry.login_, format_date(entry.created_at_));
 }
 
-std::string format_list(std::span<const pm::domain::password_entry> entries) {
-    if (entries.empty()) { return "No entries found.\n"; }
+auto format_list(std::ranges::input_range auto&& entries) {
+    if (entries.empty()) { return std::string{"No entries found.\n"}; }
 
     constexpr std::size_t id_width = 4;
     constexpr std::size_t title_width = 30;
@@ -67,58 +57,80 @@ std::string format_list(std::span<const pm::domain::password_entry> entries) {
     return result;
 }
 
+auto format_show(const pm::domain::password_entry& entry) {
+    return std::format(
+        "Entry details:\n"
+        "  ID: {}\n"
+        "  Title: {}\n"
+        "  Login: {}\n"
+        "  Password: {}\n"
+        "  Created: {}\n",
+        entry.id_, entry.title_, entry.login_.empty() ? "(empty)" : entry.login_,
+        std::string(entry.password_.length(), '*'), format_date(entry.created_at_));
+}
+
+auto format_delete_success(const pm::domain::password_entry& entry) {
+    return std::format("Entry deleted successfully: {}\n", entry.title_);
+}
+
+[[noreturn]] void pm_error(std::string_view msg) {
+    std::print(stderr, "Error: {}\n", msg);
+    throw CLI::RuntimeError{};
+}
+
 }  // namespace
 
-std::int32_t console_view::run(std::span<const std::string_view> args) const {
-    if (args.empty()) {
-        std::print("Error: no command provided\n");
-        return 1;
-    }
+void console_view::setup_commands(CLI::App& app) {
+    // add
+    auto* add_cmd = app.add_subcommand("add", "Add a new password entry");
+    add_cmd->add_option("--title", add_args_.title_, "Entry title (required)")->required();
+    add_cmd->add_option("--login", add_args_.login_, "Login/username");
+    add_cmd->add_option("--password", add_args_.password_, "Password (required)")->required();
+    add_cmd->callback([this]() { handle_add(); });
 
-    const auto command = args[0];
+    // list
+    auto* list_cmd = app.add_subcommand("list", "List all password entries");
+    list_cmd->callback([this]() { handle_list(); });
 
-    if (command == commands[0]) { return handle_add(args.subspan(1)); }
+    // show
+    auto* show_cmd = app.add_subcommand("show", "Show password entry by ID");
+    show_cmd->add_option("--id", show_args_.id_, "Entry ID")->required();
+    show_cmd->callback([this]() { handle_show(); });
 
-    if (command == commands[1]) { return handle_list(); }
+    // delete
+    auto* delete_cmd = app.add_subcommand("delete", "Delete password entry by ID");
+    delete_cmd->add_option("--id", delete_args_.id_, "Entry ID")->required();
+    delete_cmd->callback([this]() { handle_delete(); });
 
-    std::print("Error: unknown command '{}'\n", command);
-    return 1;
+    app.require_subcommand(1);
 }
 
-std::int32_t console_view::handle_add(std::span<const std::string_view> args) const {
-    std::string title;
-    std::string login;
-    std::string password;
+void console_view::handle_add() const {
+    auto result = service_.add_password(add_args_.title_, add_args_.login_, add_args_.password_);
+    if (!result) { pm_error(result.error()); }
 
-    for (const auto arg : args) {
-        if (arg.starts_with(add_option_names[0])) {
-            title = std::string{arg.substr(add_option_names[0].length())};
-        } else if (arg.starts_with(add_option_names[1])) {
-            login = std::string{arg.substr(add_option_names[1].length())};
-        } else if (arg.starts_with(add_option_names[2])) {
-            password = std::string{arg.substr(add_option_names[2].length())};
-        }
-    }
-
-    if (title.empty()) {
-        std::print("Error: --title is required\n");
-        return 1;
-    }
-
-    auto result = service_.add_password(std::move(title), std::move(login), std::move(password));
-
-    if (!result) {
-        std::print("Error: {}\n", result.error());
-        return 1;
-    }
-
-    std::print("{}", format_add(*result));
-    return 0;
+    std::print("{}", format_add_success(*result));
 }
 
-std::int32_t console_view::handle_list() const {
+void console_view::handle_list() const {
     std::print("{}", format_list(service_.list_passwords()));
-    return 0;
+}
+
+void console_view::handle_show() const {
+    auto result = service_.get_password(show_args_.id_);
+    if (!result) { pm_error(result.error()); }
+
+    std::print("{}", format_show(*result));
+}
+
+void console_view::handle_delete() const {
+    auto entry = service_.get_password(delete_args_.id_);
+    if (!entry) { pm_error(entry.error()); }
+
+    auto result = service_.delete_password(delete_args_.id_);
+    if (!result) { pm_error(result.error()); }
+
+    std::print("{}", format_delete_success(*entry));
 }
 
 }  // namespace pm::presentation

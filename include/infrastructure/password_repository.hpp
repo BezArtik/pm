@@ -1,6 +1,9 @@
+// infrastructure/password_repository.hpp
 #pragma once
 
 #include "domain/password.hpp"
+
+#include <optional>
 
 namespace pm::infrastructure {
 
@@ -18,6 +21,8 @@ public:
 
     virtual domain::password_entry add(domain::password_entry entry) = 0;
     [[nodiscard]] virtual domain::password_list get_all() const = 0;
+    [[nodiscard]] virtual std::optional<domain::password_entry> find_by_id(domain::id_type id) const = 0;
+    virtual bool remove(domain::id_type id) = 0;
 };
 
 }  // namespace pm::infrastructure

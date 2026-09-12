@@ -9,5 +9,12 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(sqlite_orm)
 
+FetchContent_Declare(
+    cli11
+    GIT_REPOSITORY https://github.com/CLIUtils/CLI11.git
+    GIT_TAG main
+)
+FetchContent_MakeAvailable(cli11)
+
 add_subdirectory(src)
 

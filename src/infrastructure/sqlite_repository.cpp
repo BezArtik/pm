@@ -1,5 +1,8 @@
 // infrastructure/sqlite_repository.cpp
+
 #include "infrastructure/sqlite_repository.hpp"
+
+#include "domain/password.hpp"
 
 #include "sqlite_orm/sqlite_orm.h"
 #include <memory>
@@ -43,6 +46,19 @@ domain::password_entry sqlite_repository::add(domain::password_entry entry) {
 
 std::vector<domain::password_entry> sqlite_repository::get_all() const {
     return pimpl_->storage_.get_all<domain::password_entry>();
+}
+
+std::optional<domain::password_entry> sqlite_repository::find_by_id(domain::id_type id) const {
+    try {
+        return pimpl_->storage_.get<domain::password_entry>(id);
+    } catch (const std::exception&) { return std::nullopt; }
+}
+
+bool sqlite_repository::remove(domain::id_type id) {
+    try {
+        pimpl_->storage_.remove<domain::password_entry>(id);
+        return true;
+    } catch (const std::exception&) { return false; }
 }
 
 }  // namespace pm::infrastructure
