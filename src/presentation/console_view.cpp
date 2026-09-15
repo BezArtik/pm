@@ -6,10 +6,45 @@
 
 #include <chrono>
 #include <format>
+#include <memory>
 #include <print>
-#include <ranges>
+#include <string>
 
 namespace pm::presentation {
+
+struct console_view::add_args {
+    std::string title_;
+    std::string login_;
+    std::string password_;
+};
+
+struct console_view::id_args {
+    domain::id_type id_{0};
+};
+
+void console_view::setup_commands(CLI::App& app) {
+    auto add_args = std::make_shared<console_view::add_args>();
+    auto* add_cmd = app.add_subcommand("add", "Add a new password entry");
+    add_cmd->add_option("--title", add_args->title_, "Entry title (required)")->required();
+    add_cmd->add_option("--login", add_args->login_, "Login/username");
+    add_cmd->add_option("--password", add_args->password_, "Password (required)")->required();
+    add_cmd->callback([this, add_args]() { handle_add(*add_args); });
+
+    auto* list_cmd = app.add_subcommand("list", "List all password entries");
+    list_cmd->callback([this]() { handle_list(); });
+
+    auto show_args = std::make_shared<id_args>();
+    auto* show_cmd = app.add_subcommand("show", "Show password entry by ID");
+    show_cmd->add_option("--id", show_args->id_, "Entry ID")->required();
+    show_cmd->callback([this, show_args]() { handle_show(*show_args); });
+
+    auto delete_args = std::make_shared<id_args>();
+    auto* delete_cmd = app.add_subcommand("delete", "Delete password entry by ID");
+    delete_cmd->add_option("--id", delete_args->id_, "Entry ID")->required();
+    delete_cmd->callback([this, delete_args]() { handle_delete(*delete_args); });
+
+    app.require_subcommand(1);
+}
 
 namespace {
 
@@ -23,18 +58,25 @@ auto format_date(pm::domain::time_type timestamp) {
     return std::format("{:%Y-%m-%d}", time);
 }
 
-auto format_add_success(const pm::domain::password_entry& entry) {
-    return std::format(
+}  // namespace
+
+void console_view::handle_add(const add_args& args) const {
+    auto result = service_.add_password(args.title_, args.login_, args.password_);
+    std::print(
         "Entry added successfully:\n"
         "  ID: {}\n"
         "  Title: {}\n"
         "  Login: {}\n"
         "  Created: {}\n",
-        entry.id_, entry.title_, entry.login_.empty() ? "(empty)" : entry.login_, format_date(entry.created_at_));
+        result.id_, result.title_, result.login_.empty() ? "(empty)" : result.login_, format_date(result.created_at_));
 }
 
-auto format_list(std::ranges::input_range auto&& entries) {
-    if (entries.empty()) { return std::string{"No entries found.\n"}; }
+void console_view::handle_list() const {
+    auto entries = service_.list_passwords();
+    if (entries.empty()) {
+        std::print("No entries found.\n");
+        return;
+    }
 
     constexpr std::size_t id_width = 4;
     constexpr std::size_t title_width = 30;
@@ -42,7 +84,6 @@ auto format_list(std::ranges::input_range auto&& entries) {
     constexpr std::size_t date_width = 10;
 
     std::string result;
-    result.reserve(entries.size() * 4);
     result += std::format("{:<{}} {:<{}} {:<{}} {:<{}}\n", "ID", id_width, "Title", title_width, "Login", login_width,
                           "Created", date_width);
     result += std::format("{:-<{}} {:-<{}} {:-<{}} {:-<{}}\n", "", id_width, "", title_width, "", login_width, "",
@@ -54,83 +95,25 @@ auto format_list(std::ranges::input_range auto&& entries) {
                               login_width, format_date(entry.created_at_), date_width);
     }
 
-    return result;
+    std::print("{}", result);
 }
 
-auto format_show(const pm::domain::password_entry& entry) {
-    return std::format(
+void console_view::handle_show(const id_args& args) const {
+    auto result = service_.get_password(args.id_);
+    std::print(
         "Entry details:\n"
         "  ID: {}\n"
         "  Title: {}\n"
         "  Login: {}\n"
         "  Password: {}\n"
         "  Created: {}\n",
-        entry.id_, entry.title_, entry.login_.empty() ? "(empty)" : entry.login_,
-        std::string(entry.password_.length(), '*'), format_date(entry.created_at_));
+        result.id_, result.title_, result.login_.empty() ? "(empty)" : result.login_,
+        std::string(result.password_.size(), '*'), format_date(result.created_at_));
 }
 
-auto format_delete_success(const pm::domain::password_entry& entry) {
-    return std::format("Entry deleted successfully: {}\n", entry.title_);
-}
-
-[[noreturn]] void pm_error(std::string_view msg) {
-    std::print(stderr, "Error: {}\n", msg);
-    throw CLI::RuntimeError{};
-}
-
-}  // namespace
-
-void console_view::setup_commands(CLI::App& app) {
-    // add
-    auto* add_cmd = app.add_subcommand("add", "Add a new password entry");
-    add_cmd->add_option("--title", add_args_.title_, "Entry title (required)")->required();
-    add_cmd->add_option("--login", add_args_.login_, "Login/username");
-    add_cmd->add_option("--password", add_args_.password_, "Password (required)")->required();
-    add_cmd->callback([this]() { handle_add(); });
-
-    // list
-    auto* list_cmd = app.add_subcommand("list", "List all password entries");
-    list_cmd->callback([this]() { handle_list(); });
-
-    // show
-    auto* show_cmd = app.add_subcommand("show", "Show password entry by ID");
-    show_cmd->add_option("--id", show_args_.id_, "Entry ID")->required();
-    show_cmd->callback([this]() { handle_show(); });
-
-    // delete
-    auto* delete_cmd = app.add_subcommand("delete", "Delete password entry by ID");
-    delete_cmd->add_option("--id", delete_args_.id_, "Entry ID")->required();
-    delete_cmd->callback([this]() { handle_delete(); });
-
-    app.require_subcommand(1);
-}
-
-void console_view::handle_add() const {
-    auto result = service_.add_password(add_args_.title_, add_args_.login_, add_args_.password_);
-    if (!result) { pm_error(result.error()); }
-
-    std::print("{}", format_add_success(*result));
-}
-
-void console_view::handle_list() const {
-    std::print("{}", format_list(service_.list_passwords()));
-}
-
-void console_view::handle_show() const {
-    auto result = service_.get_password(show_args_.id_);
-    if (!result) { pm_error(result.error()); }
-
-    std::print("{}", format_show(*result));
-}
-
-void console_view::handle_delete() const {
-    auto entry = service_.get_password(delete_args_.id_);
-    if (!entry) { pm_error(entry.error()); }
-
-    auto result = service_.delete_password(delete_args_.id_);
-    if (!result) { pm_error(result.error()); }
-
-    std::print("{}", format_delete_success(*entry));
+void console_view::handle_delete(const id_args& args) const {
+    service_.delete_password(args.id_);
+    std::print("Entry with ID {} deleted successfully.\n", args.id_);
 }
 
 }  // namespace pm::presentation

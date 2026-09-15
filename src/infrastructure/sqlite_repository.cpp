@@ -2,6 +2,7 @@
 
 #include "infrastructure/sqlite_repository.hpp"
 
+#include "core/errors/error.hpp"
 #include "domain/password.hpp"
 
 #include "sqlite_orm/sqlite_orm.h"
@@ -40,25 +41,39 @@ sqlite_repository::sqlite_repository(std::string db_path) : pimpl_(std::make_uni
 sqlite_repository::~sqlite_repository() = default;
 
 domain::password_entry sqlite_repository::add(domain::password_entry entry) {
-    entry.id_ = pimpl_->storage_.insert(entry);
-    return entry;
-}
-
-std::vector<domain::password_entry> sqlite_repository::get_all() const {
-    return pimpl_->storage_.get_all<domain::password_entry>();
-}
-
-std::optional<domain::password_entry> sqlite_repository::find_by_id(domain::id_type id) const {
     try {
-        return pimpl_->storage_.get<domain::password_entry>(id);
-    } catch (const std::exception&) { return std::nullopt; }
+        entry.id_ = static_cast<domain::id_type>(pimpl_->storage_.insert(entry));
+        return entry;
+    } catch (const std::exception& e) { throw core::database_error{e.what()}; }
 }
 
-bool sqlite_repository::remove(domain::id_type id) {
+domain::password_list sqlite_repository::get_all() const {
     try {
+        return pimpl_->storage_.get_all<domain::password_entry>();
+    } catch (const std::exception& e) { throw core::database_error{e.what()}; }
+}
+
+domain::password_entry sqlite_repository::find_by_id(domain::id_type id) const {
+    try {
+        auto entry = pimpl_->storage_.get_optional<domain::password_entry>(id);
+        if (!entry) { throw core::entry_not_found_error{id}; }
+        return *entry;
+    } catch (const core::pm_error&) { throw; } catch (const std::exception& e) {
+        throw core::database_error{e.what()};
+    }
+}
+
+void sqlite_repository::remove(domain::id_type id) {
+    try {
+        pimpl_->storage_.transaction([&] {
+            pimpl_->storage_.remove<domain::password_entry>(id);
+            if (pimpl_->storage_.changes() == 0) { throw core::entry_not_found_error{id}; }
+            return true;
+        });
         pimpl_->storage_.remove<domain::password_entry>(id);
-        return true;
-    } catch (const std::exception&) { return false; }
+    } catch (const core::pm_error&) { throw; } catch (const std::exception& e) {
+        throw core::database_error{e.what()};
+    }
 }
 
 }  // namespace pm::infrastructure

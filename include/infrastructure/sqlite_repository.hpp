@@ -5,7 +5,6 @@
 #include "infrastructure/password_repository.hpp"
 
 #include <memory>
-#include <optional>
 #include <string>
 
 namespace pm::infrastructure {
@@ -22,8 +21,8 @@ public:
 
     domain::password_entry add(domain::password_entry entry) override;
     [[nodiscard]] domain::password_list get_all() const override;
-    [[nodiscard]] std::optional<domain::password_entry> find_by_id(domain::id_type id) const override;
-    bool remove(domain::id_type id) override;
+    [[nodiscard]] domain::password_entry find_by_id(domain::id_type id) const override;
+    void remove(domain::id_type id) override;
 
 private:
     struct impl;
