@@ -3,6 +3,7 @@
 #include "presentation/console_view.hpp"
 
 #include "CLI/CLI.hpp"
+#include "core/errors/error.hpp"
 
 #include <chrono>
 #include <format>
@@ -59,6 +60,25 @@ auto format_date(pm::domain::time_type timestamp) {
 }
 
 }  // namespace
+
+bool console_view::parse_line(const std::string& line) {
+    if (line.empty()) { return true; }
+
+    if (line == "exit" || line == "quit") { return false; }
+
+    CLI::App app;
+    setup_commands(app);
+    // clang-format off
+    try {
+        app.parse(line);  
+    } catch (const CLI::ParseError& e) {
+        std::print(stderr, "{}\n", e.what());
+    } catch (const core::pm_error& e) {
+        std::print(stderr, "Error: {}\n", e.what());
+    }
+    // clang-format on
+    return true;
+}
 
 void console_view::handle_add(const add_args& args) const {
     auto result = service_.add_password(args.title_, args.login_, args.password_);

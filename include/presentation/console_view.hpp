@@ -18,6 +18,7 @@ public:
     console_view& operator=(console_view&&) = delete;
 
     void setup_commands(CLI::App& app);
+    bool parse_line(const std::string& line);
 
 private:
     struct add_args;

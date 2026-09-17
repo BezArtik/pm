@@ -4,6 +4,7 @@ target_sources(password-manager-lib PRIVATE
     app/password_service.cpp
     infrastructure/sqlite_repository.cpp
     presentation/console_view.cpp
+    presentation/repl_session.cpp
 )
 
 target_include_directories(password-manager-lib PUBLIC
