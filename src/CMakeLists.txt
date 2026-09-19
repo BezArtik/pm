@@ -2,6 +2,7 @@ add_library(password-manager-lib STATIC)
 
 target_sources(password-manager-lib PRIVATE
     app/password_service.cpp
+    app/application.cpp
     infrastructure/sqlite_repository.cpp
     presentation/console_view.cpp
     presentation/repl_session.cpp
