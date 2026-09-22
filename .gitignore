@@ -1,5 +1,5 @@
-# Complile Commands
-complile_commands.json
+# Vault storage
+*.vault
 
 # Data Base
 *.db

@@ -3,13 +3,14 @@
 
 #include "domain/password.hpp"
 #include "infrastructure/password_repository.hpp"
+#include "infrastructure/stored_password.hpp"
 
 #include <memory>
 #include <string>
 
 namespace pm::infrastructure {
 
-class sqlite_repository : public password_repository {
+class sqlite_repository final : public password_repository {
 public:
     sqlite_repository(std::string db_path);
 
@@ -19,9 +20,9 @@ public:
     sqlite_repository(sqlite_repository&&) = delete;
     sqlite_repository& operator=(sqlite_repository&&) = delete;
 
-    domain::password_entry add(domain::password_entry entry) override;
-    [[nodiscard]] domain::password_list get_all() const override;
-    [[nodiscard]] domain::password_entry find_by_id(domain::id_type id) const override;
+    stored_password add(stored_password entry) override;
+    [[nodiscard]] stored_password_list get_all() const override;
+    [[nodiscard]] stored_password find_by_id(domain::id_type id) const override;
     void remove(domain::id_type id) override;
 
 private:

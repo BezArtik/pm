@@ -22,12 +22,14 @@ public:
 
 private:
     struct add_args;
-    struct id_args;
+    struct show_args;
+    struct delete_args;
+    struct list_args;
 
-    void handle_add(const add_args& args) const;
-    void handle_list() const;
-    void handle_show(const id_args& args) const;
-    void handle_delete(const id_args& args) const;
+    void handle(const add_args& args) const;
+    void handle(const list_args&) const;
+    void handle(const show_args& args) const;
+    void handle(const delete_args& args) const;
 
     app::password_service& service_;
 };

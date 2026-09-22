@@ -6,7 +6,7 @@
 namespace pm::presentation {
 
 void repl_session::run(std::istream& in, std::ostream& out) {
-    std::string line;
+    auto&& line = std::string{};
 
     while (true) {
         out << "pm> " << std::flush;

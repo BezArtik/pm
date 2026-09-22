@@ -1,5 +1,6 @@
 #include "app/application.hpp"
 
+#include "presentation/read_password.hpp"
 #include "presentation/repl_session.hpp"
 
 #include <CLI/CLI.hpp>
@@ -11,6 +12,9 @@ namespace pm::app {
 // clang-format off
 int application::run(int argc, char** argv) {
     try {
+        auto&& master_password = presentation::read_master_password(); 
+        service_.unlock(master_password);
+
         if (argc <= 1) {
             run_repl();
             return EXIT_SUCCESS;

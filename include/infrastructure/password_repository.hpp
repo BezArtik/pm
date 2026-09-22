@@ -2,6 +2,7 @@
 #pragma once
 
 #include "domain/password.hpp"
+#include "infrastructure/stored_password.hpp"
 
 namespace pm::infrastructure {
 
@@ -14,9 +15,9 @@ public:
     password_repository(password_repository&&) = delete;
     password_repository& operator=(password_repository&&) = delete;
 
-    virtual domain::password_entry add(domain::password_entry entry) = 0;
-    [[nodiscard]] virtual domain::password_list get_all() const = 0;
-    [[nodiscard]] virtual domain::password_entry find_by_id(domain::id_type id) const = 0;
+    virtual stored_password add(stored_password entry) = 0;
+    [[nodiscard]] virtual stored_password_list get_all() const = 0;
+    [[nodiscard]] virtual stored_password find_by_id(domain::id_type id) const = 0;
     virtual void remove(domain::id_type id) = 0;
 };
 

@@ -16,5 +16,13 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(cli11)
 
+FetchContent_Declare(
+    Sodium
+    GIT_REPOSITORY https://github.com/zerokol-cmd/libsodium-cmake-latest.git
+    GIT_TAG 280aab4ed68510a58877a529a4f0ffbd66bf7749
+)
+set(SODIUM_DISABLE_TESTS ON)
+FetchContent_MakeAvailable(Sodium)
+
 add_subdirectory(src)
 

@@ -29,4 +29,20 @@ struct database_error : pm_error {
     database_error(std::string details) : pm_error{std::format("Database error: {}", details)} {}
 };
 
+struct crypto_error : pm_error {
+    crypto_error(std::string details) : pm_error{std::format("Crypto error: {}", details)} {}
+};
+
+struct serialization_error : pm_error {
+    serialization_error(std::string details) : pm_error{std::format("Serialization error: {}", details)} {}
+};
+
+struct invalid_master_password_error : pm_error {
+    invalid_master_password_error() noexcept : pm_error{"Invalid master password"} {}
+};
+
+struct vault_corrupted_error : pm_error {
+    vault_corrupted_error(std::string details) : pm_error{std::format("Vault corrupted: {}", details)} {}
+};
+
 }  // namespace pm::core
