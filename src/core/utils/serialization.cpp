@@ -1,6 +1,11 @@
-#include "core/utils/serialization.hpp"
+module;
 
-#include "core/errors/error.hpp"
+#include <cstdint>
+#include <span>
+
+module pm.core.utils.serialization;
+
+import pm.core.errors;
 
 namespace pm::core {
 

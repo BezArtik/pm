@@ -1,13 +1,14 @@
-// include/core/crypto/provider.hpp
-#pragma once
-
-#include "core/crypto/key.hpp"
-#include "core/crypto/types.hpp"
+module;
 
 #include <span>
 #include <string_view>
 
-namespace pm::core {
+export module pm.core.crypto.provider;
+
+import pm.core.crypto.types;
+import pm.core.crypto.key;
+
+export namespace pm::core {
 
 class crypto_provider {
 public:

@@ -1,9 +1,10 @@
-// include/presentation/read_password.hpp
-#pragma once
+module;
 
 #include <string>
 
-namespace pm::presentation {
+export module pm.presentation.read_password;
+
+export namespace pm::presentation {
 
 [[nodiscard]] std::string read_master_password();
 

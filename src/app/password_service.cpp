@@ -1,13 +1,15 @@
-// app/password_service.cpp
-
-#include "app/password_service.hpp"
-
-#include "core/crypto/sodium_provider.hpp"
-#include "core/errors/error.hpp"
-#include "core/serializer/serializer.hpp"
+module;
 
 #include <chrono>
+#include <span>
+#include <string_view>
 #include <utility>
+
+module pm.app.service;
+
+import pm.core.errors;
+import pm.core.serializer;
+import pm.core.crypto.sodium_provider;
 
 namespace pm::app {
 

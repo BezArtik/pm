@@ -1,10 +1,12 @@
-// infrastructure/password_repository.hpp
-#pragma once
+module;
 
-#include "domain/password.hpp"
-#include "infrastructure/stored_password.hpp"
+export module pm.infrastructure.repository;
 
-namespace pm::infrastructure {
+import pm.core.crypto.types;
+import pm.domain;
+import pm.infrastructure.stored_password;
+
+export namespace pm::infrastructure {
 
 class password_repository {
 public:

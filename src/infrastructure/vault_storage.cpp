@@ -1,10 +1,14 @@
-#include "infrastructure/vault_storage.hpp"
+module;
 
-#include "core/errors/error.hpp"
-#include "core/utils/serialization.hpp"
-
+#include <cstdint>
+#include <filesystem>
 #include <fstream>
 #include <iterator>
+
+module pm.infrastructure.vault_storage;
+
+import pm.core.errors;
+import pm.core.utils.serialization;
 
 namespace pm::infrastructure {
 

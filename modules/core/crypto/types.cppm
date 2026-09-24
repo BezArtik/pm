@@ -1,9 +1,10 @@
-// include/core/crypto/types.hpp
-#pragma once
+module;
 
 #include <vector>
 
-namespace pm::core {
+export module pm.core.crypto.types;
+
+export namespace pm::core {
 
 using byte = char;
 using byte_buffer = std::vector<byte>;

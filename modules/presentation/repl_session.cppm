@@ -1,11 +1,12 @@
-// presentation/repl_session.hpp
-#pragma once
-
-#include "presentation/console_view.hpp"
+module;
 
 #include <iosfwd>
 
-namespace pm::presentation {
+export module pm.presentation.repl_session;
+
+import pm.presentation.console_view;
+
+export namespace pm::presentation {
 
 class repl_session {
 public:

@@ -1,12 +1,13 @@
-// serializer/serializer.cpp
-#include "core/serializer/serializer.hpp"
-
-#include "core/crypto/types.hpp"
-#include "core/errors/error.hpp"
-#include "core/utils/serialization.hpp"
+module;
 
 #include <cstdint>
 #include <format>
+#include <span>
+
+module pm.core.serializer;
+
+import pm.core.errors;
+import pm.core.utils.serialization;
 
 namespace pm::core {
 

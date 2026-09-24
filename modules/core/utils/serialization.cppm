@@ -1,11 +1,15 @@
-#pragma once
+module;
 
-#include "core/crypto/types.hpp"
-
+#include <cstddef>
 #include <cstdint>
 #include <span>
 
-namespace pm::core {
+export module pm.core.utils.serialization;
+
+import pm.core.crypto.types;
+import pm.core.errors;
+
+export namespace pm::core {
 
 constexpr std::size_t u32_size = 4;
 constexpr std::size_t u8_size = 1;
@@ -16,11 +20,11 @@ constexpr unsigned shift_1 = 8;
 constexpr unsigned shift_2 = 16;
 constexpr unsigned shift_3 = 24;
 
-[[nodiscard]] inline std::uint8_t to_u8(byte b) noexcept {
+[[nodiscard]] std::uint8_t to_u8(byte b) noexcept {
     return static_cast<std::uint8_t>(static_cast<unsigned char>(b));
 }
 
-[[nodiscard]] inline byte to_byte(std::uint8_t v) noexcept {
+[[nodiscard]] byte to_byte(std::uint8_t v) noexcept {
     return static_cast<byte>(v);
 }
 

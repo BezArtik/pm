@@ -1,12 +1,12 @@
-// domain/password.hpp
-
-#pragma once
+module;
 
 #include <cstdint>
 #include <string>
 #include <vector>
 
-namespace pm::domain {
+export module pm.domain;
+
+export namespace pm::domain {
 
 using id_type = std::uint64_t;
 using time_type = std::int64_t;
@@ -16,7 +16,7 @@ struct password_entry {
     std::string title_;
     std::string login_;
     std::string password_;
-    time_type created_at_;
+    time_type created_at_{0};
 };
 
 using password_list = std::vector<password_entry>;

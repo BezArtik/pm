@@ -1,14 +1,15 @@
-// infrastructure/sqlite_repository.hpp
-#pragma once
-
-#include "domain/password.hpp"
-#include "infrastructure/password_repository.hpp"
-#include "infrastructure/stored_password.hpp"
+module;
 
 #include <memory>
 #include <string>
 
-namespace pm::infrastructure {
+export module pm.infrastructure.sqlite_repository;
+
+import pm.domain;
+import pm.infrastructure.stored_password;
+import pm.infrastructure.repository;
+
+export namespace pm::infrastructure {
 
 class sqlite_repository final : public password_repository {
 public:

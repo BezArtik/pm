@@ -1,9 +1,13 @@
-#include "core/crypto/sodium_provider.hpp"
-
-#include "core/errors/error.hpp"
+module;
 
 #include <array>
 #include <sodium.h>
+#include <span>
+#include <string_view>
+
+module pm.core.crypto.sodium_provider;
+
+import pm.core.errors;
 
 namespace pm::core {
 

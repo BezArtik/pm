@@ -1,7 +1,8 @@
-// src/core/crypto/key.cpp
-#include "core/crypto/key.hpp"
+module;
 
 #include <sodium.h>
+
+module pm.core.crypto.key;
 
 namespace pm::core {
 

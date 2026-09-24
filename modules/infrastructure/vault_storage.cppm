@@ -1,12 +1,13 @@
-// infrastructure/vault_storage.hpp
-#pragma once
-
-#include "core/crypto/types.hpp"
+module;
 
 #include <filesystem>
 #include <optional>
 
-namespace pm::infrastructure {
+export module pm.infrastructure.vault_storage;
+
+import pm.core.crypto.types;
+
+export namespace pm::infrastructure {
 
 class vault_storage {
     struct vault_header {

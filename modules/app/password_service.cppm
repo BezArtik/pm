@@ -1,16 +1,18 @@
-// app/password_service.hpp
-#pragma once
-
-#include "core/crypto/key.hpp"
-#include "core/crypto/provider.hpp"
-#include "domain/password.hpp"
-#include "infrastructure/password_repository.hpp"
-#include "infrastructure/vault_storage.hpp"
+module;
 
 #include <optional>
 #include <string>
+#include <string_view>
 
-namespace pm::app {
+export module pm.app.service;
+
+import pm.core.crypto.key;
+import pm.core.crypto.provider;
+import pm.domain;
+import pm.infrastructure.repository;
+import pm.infrastructure.vault_storage;
+
+export namespace pm::app {
 
 class password_service {
 public:

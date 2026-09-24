@@ -1,12 +1,14 @@
-#include "app/application.hpp"
+module;
 
-#include "presentation/read_password.hpp"
-#include "presentation/repl_session.hpp"
-
-#include <CLI/CLI.hpp>
-#include <cstdlib>
 #include <iostream>
 #include <print>
+
+module pm.app.application;
+
+import cli11;
+import pm.core.errors;
+import pm.presentation.read_password;
+import pm.presentation.repl_session;
 
 namespace pm::app {
 // clang-format off

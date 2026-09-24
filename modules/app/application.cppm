@@ -1,12 +1,12 @@
-#pragma once
+export module pm.app.application;
 
-#include "app/password_service.hpp"
-#include "core/crypto/sodium_provider.hpp"
-#include "infrastructure/sqlite_repository.hpp"
-#include "infrastructure/vault_storage.hpp"
-#include "presentation/console_view.hpp"
+import pm.app.service;
+import pm.core.crypto.sodium_provider;
+import pm.infrastructure.sqlite_repository;
+import pm.infrastructure.vault_storage;
+import pm.presentation.console_view;
 
-namespace pm::app {
+export namespace pm::app {
 
 class application {
 public:

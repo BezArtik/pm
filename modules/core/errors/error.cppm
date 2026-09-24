@@ -1,13 +1,12 @@
-// core/errors/error.hpp
-#pragma once
-
-#include "domain/password.hpp"
+module;
 
 #include <format>
 #include <stdexcept>
 #include <string>
 
-namespace pm::core {
+export module pm.core.errors;
+
+export namespace pm::core {
 
 struct pm_error : std::runtime_error {
     using std::runtime_error::runtime_error;
@@ -22,7 +21,7 @@ struct empty_password_error : pm_error {
 };
 
 struct entry_not_found_error : pm_error {
-    entry_not_found_error(domain::id_type id) : pm_error{std::format("Entry with id {} not found", id)} {}
+    entry_not_found_error() noexcept : pm_error{"Entry not found"} {}
 };
 
 struct database_error : pm_error {
@@ -46,3 +45,4 @@ struct vault_corrupted_error : pm_error {
 };
 
 }  // namespace pm::core
+

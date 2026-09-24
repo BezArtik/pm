@@ -1,12 +1,13 @@
-// include/core/crypto/key.hpp
-#pragma once
-
-#include "core/crypto/types.hpp"
+module;
 
 #include <array>
 #include <cstddef>
 
-namespace pm::core {
+export module pm.core.crypto.key;
+
+import pm.core.crypto.types;
+
+export namespace pm::core {
 
 class crypto_key {
 public:

@@ -1,6 +1,4 @@
-// main.cpp
-
-#include "app/application.hpp"
+import pm.app.application;
 
 int main(int argc, char** argv) {
     pm::app::application app;

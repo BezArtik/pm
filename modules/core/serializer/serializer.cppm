@@ -1,12 +1,13 @@
-// core/serializer/serializer.hpp
-#pragma once
-
-#include "core/crypto/types.hpp"
-#include "domain/password.hpp"
+module;
 
 #include <span>
 
-namespace pm::core {
+export module pm.core.serializer;
+
+import pm.core.crypto.types;
+import pm.domain;
+
+export namespace pm::core {
 
 class serializer {
 public:

@@ -1,7 +1,10 @@
-#include "presentation/repl_session.hpp"
+module;
 
-#include <iostream>
+#include <istream>
+#include <ostream>
 #include <string>
+
+module pm.presentation.repl_session;
 
 namespace pm::presentation {
 

@@ -1,11 +1,14 @@
-// presentation/console_view.hpp
-#pragma once
+module;
 
-#include "app/password_service.hpp"
+#include <string>
 
-#include <CLI/CLI.hpp>
+export module pm.presentation.console_view;
 
-namespace pm::presentation {
+import cli11;
+import pm.app.service;
+import pm.domain;
+
+export namespace pm::presentation {
 
 class console_view {
 public:

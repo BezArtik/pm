@@ -1,13 +1,14 @@
-// infrastructure/sqlite_repository.cpp
 
-#include "infrastructure/sqlite_repository.hpp"
+module;
 
-#include "core/errors/error.hpp"
-#include "domain/password.hpp"
-#include "infrastructure/stored_password.hpp"
-
-#include "sqlite_orm/sqlite_orm.h"
 #include <memory>
+#include <sqlite_orm/sqlite_orm.h>
+#include <utility>
+
+module pm.infrastructure.sqlite_repository;
+
+import pm.core.errors;
+import pm.infrastructure.stored_password;
 
 namespace pm::infrastructure {
 
@@ -54,7 +55,7 @@ stored_password_list sqlite_repository::get_all() const {
 stored_password sqlite_repository::find_by_id(domain::id_type id) const {
     try {
         auto&& entry = pimpl_->storage_.get_optional<stored_password>(id);
-        if (!entry) { throw core::entry_not_found_error{id}; }
+        if (!entry) { throw core::entry_not_found_error{}; }
         return *entry;
     } catch (const core::pm_error&) { throw; } catch (const std::exception& e) {
         throw core::database_error{e.what()};
@@ -65,7 +66,7 @@ void sqlite_repository::remove(domain::id_type id) {
     try {
         pimpl_->storage_.transaction([&] {
             pimpl_->storage_.remove<stored_password>(id);
-            if (pimpl_->storage_.changes() == 0) { throw core::entry_not_found_error{id}; }
+            if (pimpl_->storage_.changes() == 0) { throw core::entry_not_found_error{}; }
             return true;
         });
         pimpl_->storage_.remove<stored_password>(id);

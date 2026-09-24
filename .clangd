@@ -1,6 +1,7 @@
 
 CompileFlags:
   CompilationDatabase: out/build/clang-debug/
+  Add: [-std=c++23]
 
 Diagnostics:
   UnusedIncludes: Strict

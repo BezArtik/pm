@@ -1,16 +1,15 @@
-// presentation/console_view.cpp
-
-#include "presentation/console_view.hpp"
-
-#include "CLI/CLI.hpp"
-#include "core/errors/error.hpp"
-#include "domain/password.hpp"
+module;
 
 #include <chrono>
 #include <format>
 #include <memory>
 #include <print>
 #include <string>
+
+module pm.presentation.console_view;
+
+import cli11;
+import pm.core.errors;
 
 namespace pm::presentation {
 

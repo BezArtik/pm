@@ -1,10 +1,11 @@
-// presentation/read_password.cpp
-#include "presentation/read_password.hpp"
+module;
 
 #include <iostream>
 #include <print>
 #include <termios.h>
 #include <unistd.h>
+
+module pm.presentation.read_password;
 
 namespace pm::presentation {
 
